@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Linux & DevOps Notes</title>
+<style>
+:root{--bg:#f2f5f9;--card:#fff;--ink:#16202e;--mute:#5b6878;--line:#d5dde8;--a:#c2570c;--b:#0b6fa8;--term:#101826;--termink:#d8e4f2;--ok:#1b8a5a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e141d;--card:#161f2c;--ink:#e6edf6;--mute:#93a1b4;--line:#27344a;--a:#ffb454;--b:#6cc4ff;--term:#0a0f17;--ok:#5fd6a0}}
+:root[data-theme="dark"]{--bg:#0e141d;--card:#161f2c;--ink:#e6edf6;--mute:#93a1b4;--line:#27344a;--a:#ffb454;--b:#6cc4ff;--term:#0a0f17;--ok:#5fd6a0}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding:20px 18px 60px}
+h1,h2{font-family:Georgia,"Iowan Old Style",serif;font-weight:700;line-height:1.15}
+h1{font-size:clamp(2rem,6vw,3rem);margin:.2em 0 .3em}
+h2{font-size:1.6rem;margin:2.2em 0 .5em}
+p{margin:.4em 0;color:var(--mute)}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+code{background:color-mix(in srgb,var(--b) 14%,transparent);padding:1px 6px;border-radius:5px;font-size:.88em;color:var(--ink)}
+.term{background:var(--term);color:var(--termink);border-radius:12px;padding:16px 18px;min-height:230px;font:14px/1.7 ui-monospace,Menlo,Consolas,monospace;overflow-x:auto;box-shadow:0 0 0 1px var(--line)}
+.term .bar{display:flex;gap:6px;margin-bottom:10px}.term .bar i{width:10px;height:10px;border-radius:50%;background:#4a5a72}
+.pr{color:#6cc4ff}.out{color:#8fa3bd}.cur{display:inline-block;width:8px;height:1em;background:#ffb454;vertical-align:-2px;animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+.track{display:flex;gap:6px;margin:22px 0 6px;position:relative}
+.day{flex:1;text-align:center;padding:8px 2px;border-radius:8px;background:var(--card);border:1px solid var(--line);font-size:.78rem;cursor:pointer;color:var(--mute);transition:transform .2s,border-color .2s}
+.day b{display:block;color:var(--ink);font-size:.95rem}
+.day.on{border-color:var(--a);transform:translateY(-4px)}
+.day.on b{color:var(--a)}
+.dayinfo{min-height:3.2em;padding:10px 14px;border-left:3px solid var(--a);background:var(--card);border-radius:0 8px 8px 0}
+.dayinfo p{margin:0;color:var(--ink)}
+.tl{position:relative;margin:10px 0 0;padding-left:28px}
+.tl:before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl:after{content:"";position:absolute;left:8px;top:6px;width:2px;height:var(--p,0%);background:var(--a);transition:height .5s}
+.step{position:relative;margin:0 0 12px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer}
+.step:before{content:"";position:absolute;left:-26px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--line);transition:.25s}
+.step.done:before{background:var(--ok);border-color:var(--ok);transform:scale(1.2)}
+.step h3{margin:0;font-size:1rem;display:flex;justify-content:space-between;gap:8px}
+.step h3 span{font-weight:400;color:var(--mute);font-size:.85rem}
+.step .more{max-height:0;overflow:hidden;transition:max-height .35s}
+.step.open .more{max-height:260px}
+.more pre{margin:10px 0 0;padding:10px 12px;background:var(--term);color:var(--termink);border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.55}
+.hint{font-size:.82rem;color:var(--mute)}
+.perm{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.bits{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grp{text-align:center;font-size:.8rem;color:var(--mute)}
+.grp div{display:flex;gap:5px;justify-content:center;margin-top:4px}
+.bit{width:44px;height:44px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--mute);font:700 1rem ui-monospace,monospace;cursor:pointer;transition:.2s}
+.bit.on{background:var(--b);color:#fff;border-color:var(--b);transform:scale(1.08)}
+.res{margin-top:14px;display:flex;flex-wrap:wrap;gap:14px;align-items:baseline;font-family:ui-monospace,monospace}
+.res big{font-size:1.9rem;color:var(--a)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chips button{font:inherit;font-size:.82rem;padding:5px 10px;border-radius:99px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.mod{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.mod h3{margin:0 0 6px;font-size:1.05rem}
+.mod ul{margin:0;padding-left:18px;color:var(--mute);font-size:.9rem}
+.flip{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;min-height:84px}
+.flip .q{color:var(--a);font-weight:600;font-size:.92rem}
+.flip .f{max-height:0;overflow:hidden;opacity:0;transition:.3s;color:var(--ink);font-size:.9rem}
+.flip.open .f{max-height:140px;opacity:1;margin-top:6px}
+.qa{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;padding:12px 14px;cursor:pointer}
+.qa b{display:block}.qa .f{max-height:0;overflow:hidden;transition:max-height .3s;color:var(--ok)}
+.qa.open .f{max-height:100px;margin-top:6px}
+.score{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));margin-top:20px;text-align:center}
+.score span{display:inline-block;background:var(--card);border:1px solid var(--line);padding:6px 16px;border-radius:99px;font-size:.88rem}
+:focus-visible{outline:2px solid var(--b);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main>
+<div class="term" id="t" aria-label="Animated terminal"><div class="bar"><i></i><i></i><i></i></div><div id="tl"></div></div>
+<h1>Linux &amp; DevOps notes</h1>
+<p>Prithika's study notes, made to click through. Tap anything that looks tappable.</p>
+
+<h2>The 7-day roadmap</h2>
+<div class="track" id="track"></div>
+<div class="dayinfo"><p id="di"></p></div>
+
+<h2>Day 1 plan: tick each block</h2>
+<p class="hint">Tap a block to open its commands. Tap the dot-side title again to mark it done.</p>
+<div class="tl" id="steps"></div>
+
+<h2>Read permissions like a pro</h2>
+<div class="perm">
+<div class="bits" id="bits"></div>
+<div class="res"><span>chmod <big id="oct">000</big></span><span id="sym">---------</span></div>
+<p id="mean" style="margin-top:8px"></p>
+<div class="chips" id="chips"></div>
+</div>
+
+<h2>Linux modules</h2>
+<div class="grid">
+<div class="mod"><h3>1. Shell and files</h3><ul><li><code>/etc</code> config, <code>/var</code> logs, <code>/usr</code> programs</li><li>Hard link = same data; <code>ln -s</code> breaks if original is deleted</li><li><code>mkdir -p proj/{src,docs,tests}</code></li><li>vim: <code>i</code>, Esc, <code>:wq</code>, <code>:q!</code></li></ul></div>
+<div class="mod"><h3>2. Text and pipes</h3><ul><li>stdin 0, stdout 1, stderr 2</li><li><code>&gt;</code> overwrite, <code>&gt;&gt;</code> append, <code>2&gt;&amp;1</code></li><li><code>grep -rin</code>, <code>sort | uniq -c</code>, <code>awk</code>, <code>sed</code></li><li><code>find . -mtime -1</code></li></ul></div>
+<div class="mod"><h3>3. Users and permissions</h3><ul><li><code>usermod -aG</code>: keep the <code>-a</code></li><li>setgid <code>2770</code>: files inherit the group</li><li>Sticky bit: only owner or root deletes in <code>/tmp</code></li><li>Edit sudo rules only with <code>visudo</code></li></ul></div>
+</div>
+
+<h2>WSL problems and fixes</h2>
+<p class="hint">Tap a problem to see the fix.</p>
+<div class="grid" id="fix"></div>
+
+<h2>Check yourself</h2>
+<p class="hint">Say the answer out loud, then tap to check. Tap again to hide.</p>
+<div id="qa"></div>
+<div class="score"><span id="sc">0 / 5 revealed</span></div>
+</main>
+<script>
+const $=s=>document.querySelector(s),mk=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+// terminal
+const script=[["wsl --install","Ubuntu is ready."],["cat /etc/os-release | head -2","PRETTY_NAME=\"Ubuntu 24.04 LTS\""],["whoami && id","prithika  uid=1000 groups=sudo"],["chmod 754 deploy.sh && ls -l deploy.sh","-rwxr-xr-- 1 prithika devs deploy.sh"],["ss -tulpn | grep :80","tcp LISTEN 0.0.0.0:80 nginx"],["git log --oneline -3","a91c2e1 deploy site from git"]];
+const tl=$("#tl"),still=matchMedia("(prefers-reduced-motion:reduce)").matches;
+function show(i){tl.innerHTML=script.slice(0,i+1).map(r=>`<div><span class="pr">$</span> ${esc(r[0])}</div><div class="out">${esc(r[1])}</div>`).join("")}
+async function run(){if(still){show(script.length-1);return}
+let i=0;while(true){tl.innerHTML=script.slice(Math.max(0,i-2),i).map(r=>`<div><span class="pr">$</span> ${esc(r[0])}</div><div class="out">${esc(r[1])}</div>`).join("");
+const row=mk("div","",'<span class="pr">$</span> <span></span><span class="cur"></span>');tl.appendChild(row);const sp=row.children[1];
+for(const ch of script[i][0]){sp.textContent+=ch;await new Promise(r=>setTimeout(r,45))}
+await new Promise(r=>setTimeout(r,350));row.querySelector(".cur").remove();tl.appendChild(mk("div","out",esc(script[i][1])));
+await new Promise(r=>setTimeout(r,1500));i=(i+1)%script.length}}
+run();
+// roadmap
+const days=[["Mon","Linux","Linux, networking, Git. Goal: be comfortable in a terminal. This is where you are now."],["Tue","AWS","IAM, EC2, S3, VPC. Launch an instance, SSH in, serve a page with nginx."],["Wed","Docker","Images, Dockerfile, Compose. Dockerize an app and push it to Docker Hub."],["Thu","CI/CD","GitHub Actions: test, build an image, push it on every commit."],["Fri","IaC","Terraform creates the server, Ansible configures it."],["Sat","K8s","Pods, Deployments, Services. Run 3 replicas on minikube or kind. The hardest day."],["Sun","Monitor","Prometheus and Grafana, then the capstone that ties it all together."]];
+days.forEach((d,i)=>{const e=mk("div","day"+(i?"":" on"),`<b>${d[0]}</b>${d[1]}`);e.tabIndex=0;e.onclick=()=>pick(i);e.onkeydown=k=>{if(k.key=="Enter")pick(i)};$("#track").appendChild(e)});
+function pick(i){document.querySelectorAll(".day").forEach((e,j)=>e.classList.toggle("on",i==j));$("#di").textContent=days[i][2]}
+pick(0);
+// day 1 steps
+const steps=[["Setup","15 min","wsl --install\nsudo apt update && sudo apt upgrade -y"],["Linux commands","45 min","pwd; ls -la; cd /var/log; cd ~\nmkdir -p lab/test && cd lab\ngrep -i \"error\" /var/log/syslog | head\nfind / -name \"*.conf\" 2>/dev/null | head"],["Permissions, processes, services","45 min","ls -l a.txt; chmod 644 a.txt; chown $USER:$USER a.txt\nps aux | grep nginx; df -h; free -h\nsystemctl status ssh\njournalctl -u ssh --since \"10 min ago\""],["Networking","45 min","ip a\nping -c 4 google.com\nnslookup google.com\ncurl -I https://example.com\nss -tulpn"],["Git","45 min","git init; git add .; git commit -m \"first commit\"\ngit checkout -b feature-y\ngit merge feature-x; git log --oneline --graph\ngit push -u origin main"],["Mini deploy with nginx","60 min","sudo apt install nginx -y\ncurl localhost\nsudo git clone <repo-url> /var/www/mysite\nsudo nginx -t && sudo systemctl reload nginx\ntail -f /var/log/nginx/access.log"]];
+const sb=$("#steps");
+steps.forEach(s=>{const e=mk("div","step",`<h3><label>${s[0]}</label><span>${s[1]}</span></h3><div class="more"><pre>${esc(s[2])}</pre></div>`);
+e.onclick=ev=>{if(ev.target.tagName=="LABEL"){e.classList.toggle("done")}else e.classList.toggle("open");const n=sb.querySelectorAll(".done").length;sb.style.setProperty("--p",(n/steps.length*100)+"%")};sb.appendChild(e)});
+// chmod
+const names=["r","w","x"],vals=[4,2,1],state=Array(9).fill(false),B=$("#bits");
+["Owner","Group","Others"].forEach((g,gi)=>{const c=mk("div","grp",g),w=mk("div");names.forEach((n,i)=>{const b=mk("button","bit",n);b.setAttribute("aria-label",g+" "+n);b.onclick=()=>{state[gi*3+i]=!state[gi*3+i];draw()};w.appendChild(b)});c.appendChild(w);B.appendChild(c)});
+function draw(){const bs=B.querySelectorAll(".bit");let o="",s="";for(let g=0;g<3;g++){let n=0;for(let i=0;i<3;i++){const on=state[g*3+i];bs[g*3+i].classList.toggle("on",on);if(on)n+=vals[i];s+=on?names[i]:"-"}o+=n}
+$("#oct").textContent=o;$("#sym").textContent="-"+s;const w=["nothing","run only","write only","write and run","read only","read and run","read and write","read, write and run"];
+$("#mean").textContent=`Owner: ${w[o[0]]}. Group: ${w[o[1]]}. Others: ${w[o[2]]}.`}
+[["754",7,5,4],["600",6,0,0],["644",6,4,4],["755",7,5,5]].forEach(p=>{const b=mk("button","",`chmod ${p[0]}`);b.onclick=()=>{for(let g=0;g<3;g++){const n=p[g+1];for(let i=0;i<3;i++)state[g*3+i]=!!(n&vals[i])}draw()};$("#chips").appendChild(b)});
+$("#chips").children[0].click();
+// fixes
+[["Red \"system scope bus\" errors during apt upgrade","systemd was not running in the first session. Harmless: run wsl --shutdown in Windows, then reopen Ubuntu."],["\"wsl: command not found\" inside Ubuntu","wsl is a Windows command. Run it in PowerShell, or use wsl.exe --shutdown inside Ubuntu."],["Garbage text like ;46;99;1;0;1_ when typing","Terminal stuck in key-code mode. Close it, reopen Ubuntu from Start. If it returns: printf '\\e[?9001l', then reset, then wsl --update."],["systemct1 not found","You typed the digit 1. It is the letter l: systemctl."],["is-system-running shows \"degraded\"","One unit failed (systemd-binfmt). Harmless in WSL. Check with systemctl --failed."],["Prompt shows /mnt/c/Users/...","That is your Windows folder, where permissions do not work properly. Run cd ~ and practice in /home."]].forEach(f=>{const e=mk("div","flip",`<div class="q">${esc(f[0])}</div><div class="f">${esc(f[1])}</div>`);e.onclick=()=>e.classList.toggle("open");$("#fix").appendChild(e)});
+// quiz
+[["What does -rwxr-x--- mean?","Owner reads, writes and runs. Group reads and runs. Others get nothing."],["What does chmod 754 set?","rwxr-xr-- : owner 7, group 5, others 4."],["What does setgid do on a directory?","New files inherit the directory's group, not the creator's."],["Why can't bob delete alice's file in /tmp?","The sticky bit: only the file's owner or root can delete it."],["How can alice run only systemctl restart nginx with sudo?","Add one rule in /etc/sudoers.d/alice, edited with visudo."]].forEach(q=>{const e=mk("div","qa",`<b>${esc(q[0])}</b><div class="f">${esc(q[1])}</div>`);e.onclick=()=>{e.classList.toggle("open");$("#sc").textContent=document.querySelectorAll(".qa.open").length+" / 5 revealed"};$("#qa").appendChild(e)});
+</script>
+</body>
+</html>
